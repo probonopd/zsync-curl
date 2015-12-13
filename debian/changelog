@@ -1,0 +1,21 @@
+zsync-curl (0.6.2-3) raring; urgency=low
+
+  * Remove zsyncmake from build
+  * Change binary name to zsync_curl
+
+ -- Mike Heald <mike.heald@canonical.com>  Tue, 12 Feb 2012 16:48:07 -0000
+
+zsync-curl (0.6.2-2) raring; urgency=low
+
+  * Debian build configuration update
+
+ -- Mike Heald <mike.heald@canonical.com>  Tue, 12 Feb 2012 13:34:07 -0000
+
+zsync-curl (0.6.2-1) raring; urgency=low
+
+  * Initial fork from zsync 0.6.2:
+    - internal http client replaced with libcurl
+    - added -c option to set cookie for all requests
+
+ -- Mike Heald <mike.heald@canonical.com>  Mon, 11 Feb 2012 16:21:07 -0000
+

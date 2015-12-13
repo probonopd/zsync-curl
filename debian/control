@@ -1,0 +1,24 @@
+Source: zsync-curl
+Section: net
+Priority: optional
+Maintainer: Mike Heald <mike.heald@canonical.com>
+Build-Depends: debhelper (>= 8.0.0), autotools-dev, libcurl4-openssl-dev
+Standards-Version: 3.9.2
+Homepage: http://launchpad.net/zsync-curl
+
+Package: zsync-curl
+Architecture: any
+Suggests: zsync
+Depends: ${shlibs:Depends}, ${misc:Depends}, libcurl3
+Description: client-side implementation of the rsync algorithm
+ zsync is a file transfer program to download files from
+ remote web servers. If a previous version of a file is available
+ locally, zsync will only download changed parts and hereby
+ minimise the download volume. The algorithm is the same as used
+ by rsync(1), but zsync does not require any server software
+ (apart from a web server), nor does it need shell access.
+ Instead, it uses a control file (.zsync file) that describes the
+ file to be downloaded, which it uses to determine the blocks to
+ fetch. This file is created once on the server (and not for each
+ request) and sits next to actual file to download
+ This version replaces the internal http client with libcurl.
