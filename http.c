@@ -2,6 +2,7 @@
 /*
  *   zsync - client side rsync over http
  *   Copyright (C) 2004,2005,2007,2009 Colin Phipps <cph@moria.org.uk>
+ *   Copyright (C) 2015 Simon Peter
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the Artistic License v2 (see the accompanying 
@@ -119,7 +120,12 @@ struct range_fetch {
     if(cookie != NULL){
         curl_easy_setopt(handle, CURLOPT_COOKIE, cookie);
     }
-    curl_easy_setopt(handle, CURLOPT_VERBOSE, 0L);
+
+    char* verbose;
+    verbose = getenv ("CURLOPT_VERBOSE");
+    if (verbose!=NULL){
+      curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
+    }
 }
 
 /****************************************************************************
@@ -447,7 +453,8 @@ size_t http_fread(void *ptr, size_t size, size_t nmemb, HTTP_FILE *file)
 
 /* Remember referrer */
 char *referer;
-
+char *redirected;
+int use_redirected = 0;
 
 /* range_fetch methods */
 
