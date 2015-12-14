@@ -299,7 +299,7 @@ int fetch_remaining_blocks_http(struct zsync_state *z, const char *url,
     /* URL might be relative - we need an absolute URL to do a fetch */
     
     char *u;
-    fprintf(stderr, "\n### make_url_absolute(%s, %s)\n", referer, url);
+    if (getenv("CURLOPT_VERBOSE")!=NULL) fprintf(stderr, "\n### make_url_absolute(%s, %s)\n", referer, url);
     u = make_url_absolute(referer, url);
     if (use_redirected == 1) {
         CURL *curl;
