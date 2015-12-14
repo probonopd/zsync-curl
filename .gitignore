@@ -1,0 +1,15 @@
+.cproject
+.dep/
+.project
+.settings/
+
+# files being edited
+*~
+
+# make and build files
+*.lst
+*.o
+*.eep
+*.lss
+*.map
+*.sym
