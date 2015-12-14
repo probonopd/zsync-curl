@@ -308,9 +308,14 @@ int fetch_remaining_blocks_http(struct zsync_state *z, const char *url,
         char *redirected_payload_url;
         curl = curl_easy_init();
         curl_easy_setopt(curl, CURLOPT_URL, u);
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1u);
+        // CURLOPT_NOBODY would result in a HEAD rather than GET request
+        // to which some servers respond differently; hence we cannot use it
+        curl_easy_setopt(curl, CURLOPT_RANGE, "0-0"); // Replacement for CURLOPT_NOBODY 
+        // what if the server ignores the CURLOPT_RANGE - TODO: reject any body coming in
         curl_easy_perform(curl);
         if (curl) {
-            res = curl_easy_getinfo( curl, CURLINFO_REDIRECT_URL, &redirected_payload_url );
+            res = curl_easy_getinfo( curl, CURLINFO_EFFECTIVE_URL, &redirected_payload_url );
             if(res != CURLE_OK) {
                 fprintf(stderr, "Could not get last effective URL: %s\n", curl_easy_strerror(res));
                 u = make_url_absolute(referer, u);
