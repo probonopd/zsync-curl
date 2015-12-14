@@ -16,7 +16,7 @@ cd zsync-curl/
 ./configure && make && sudo make install
 
 ```
-To build on __Ubuntu_:
+To build on __Ubuntu__:
 ```
 sudo apt-get -y install libcurl4-gnutls-dev git gcc
 git clone https://github.com/probonopd/zsync-curl.git
