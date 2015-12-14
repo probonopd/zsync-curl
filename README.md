@@ -8,10 +8,20 @@ This fork uses [libcurl](http://curl.haxx.se/libcurl/) in order to support __HTT
 
 ## Building
 
-To build:
+To build and install locally:
 ```
 git clone https://github.com/probonopd/zsync-curl.git
 ./zsync-curl/build.sh
+```
+
+To build a deb:
+
+```
+git clone https://github.com/probonopd/zsync-curl.git
+sudo apt-get install devscripts autotools-dev libcurl4-openssl-dev
+cd ./zsync-curl/src
+debuild -i -us -uc -b
+cd -
 ```
 
 ## Usage
