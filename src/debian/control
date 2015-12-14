@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Mike Heald <mike.heald@canonical.com>
 Build-Depends: debhelper (>= 8.0.0), autotools-dev, libcurl4-openssl-dev
 Standards-Version: 3.9.2
-Homepage: http://launchpad.net/zsync-curl
+Homepage: https://github.com/probonopd/zsync-curl
 
 Package: zsync-curl
 Architecture: any
