@@ -119,7 +119,7 @@ struct range_fetch {
     if(cookie != NULL){
         curl_easy_setopt(handle, CURLOPT_COOKIE, cookie);
     }
-    curl_easy_setopt(handle, CURLOPT_VERBOSE, 0L);
+    curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
 }
 
 /****************************************************************************
@@ -447,7 +447,8 @@ size_t http_fread(void *ptr, size_t size, size_t nmemb, HTTP_FILE *file)
 
 /* Remember referrer */
 char *referer;
-
+char *redirected;
+int use_redirected = 0;
 
 /* range_fetch methods */
 
