@@ -187,7 +187,10 @@ struct zsync_state *read_zsync_control_file(const char *p, const char *fn) {
             fprintf(stderr, "could not read control file from URL %s\n", p);
             exit(3);
         }
-        referer = lastpath;
+        referer = p; // ###
+        redirected = lastpath;
+        fprintf(stderr, "\n### Leaving referer as %s\n", p);
+        fprintf(stderr, "\n### Setting redirected to %s\n", p);
     }
 
     /* Read the .zsync */
@@ -292,7 +295,20 @@ int fetch_remaining_blocks_http(struct zsync_state *z, const char *url,
     struct zsync_receiver *zr;
 
     /* URL might be relative - we need an absolute URL to do a fetch */
-    char *u = make_url_absolute(referer, url);
+    
+    char *u;
+    fprintf(stderr, "\n###  make_url_absolute(%s, %s)\n", referer, url);
+    if (use_redirected == 1) {
+        fprintf(stderr, "\n###  NOW I SHOUD USE THE REDIRECTED URL OF THE PAYLOAD FILE (NOT THE ZISO FILE!) WHICH I DO NOT HAVE. BEFORE WE MAKE RANGE REQUESTS WE SHOULD GET THE REAL URL. HOW?\n", "");
+        u = make_url_absolute(redirected, url);
+        // ### IF I MANUALLY SET u TO THE REDIRECTED URL OF THE URL FROM WHICH WE range_fetch_start(u) THEN IT WORKS
+        // BUT I DO NOT KNOW HOW TO GET THE REDIRECTED URL OF THAT.
+        fprintf(stderr, "\n###  make_url_absolute(%s, %s)\n", redirected, url);
+    }
+    else
+    {
+        u = make_url_absolute(referer, url);
+    }
     if (!u) {
         fprintf(stderr,
                 "URL '%s' from the .zsync file is relative, but I don't know the referer URL (you probably downloaded the .zsync separately and gave it to me as a file). I need to know the referring URL (the URL of the .zsync) in order to locate the download. You can specify this with -u (or edit the URL line(s) in the .zsync file you have).\n",
@@ -414,7 +430,8 @@ int fetch_remaining_blocks(struct zsync_state *zs) {
 
         if (!status[try]) {
             const char *tryurl = url[try];
-
+            fprintf(stderr, "\n###  fetch from %s ### USE THE REDIRECTED URL IN MAKE-ABSOLUTE FROM NOW ON - THE PITY IS THAT I DON'T HAVE THE REDIRECTED URL FOR THE PAYLOAD FILE BUT ONLY FOR THE ZSYNC FILE URL IN THE VARIABLE redirected\n)", tryurl);
+            use_redirected=1;
             /* Try fetching data from this URL */
             int rc = fetch_remaining_blocks_http(zs, tryurl, utype);
             if (rc != 0) {
@@ -674,6 +691,7 @@ int main(int argc, char **argv) {
     if (!no_progress)
         printf("used %lld local, fetched %lld\n", local_used, http_down);
     free(referer);
+    free(redirected);
     free(temp_file);
     return 0;
 }
