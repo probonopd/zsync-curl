@@ -13,7 +13,6 @@ To build:
 sudo yum -y install git 
 git clone https://github.com/probonopd/zsync-curl.git
 ./zsync-curl/build.sh
-
 ```
 To build on __Ubuntu__:
 ```
