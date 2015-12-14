@@ -119,7 +119,12 @@ struct range_fetch {
     if(cookie != NULL){
         curl_easy_setopt(handle, CURLOPT_COOKIE, cookie);
     }
-    curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
+
+    char* verbose;
+    verbose = getenv ("CURLOPT_VERBOSE");
+    if (verbose!=NULL){
+      curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
+    }
 }
 
 /****************************************************************************
