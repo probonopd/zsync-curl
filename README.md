@@ -8,18 +8,16 @@ This fork uses [libcurl](http://curl.haxx.se/libcurl/) in order to support __htt
 
 ## Building
 
-To build on __Fedora__:
+To build:
 ```
-sudo yum -y install libcurl-devel gcc git 
+sudo yum -y install git 
 git clone https://github.com/probonopd/zsync-curl.git
-cd zsync-curl/
-./configure && make && sudo make install
+./zsync-curl/build.sh
 
 ```
 To build on __Ubuntu__:
 ```
 sudo apt-get -y install libcurl4-gnutls-dev git gcc
 git clone https://github.com/probonopd/zsync-curl.git
-cd zsync-curl/
-./configure && make && sudo make install
+./zsync-curl/build.sh
 ```
