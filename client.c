@@ -169,7 +169,7 @@ static void **append_ptrlist(int *n, void **p, void *a) {
  * .zsync _if it is retrieved from a URL_; can be NULL in which case no local
  * copy is made.
  */
-struct zsync_state *read_zsync_control_file(const char *p, const char *fn) {
+struct zsync_state *read_zsync_control_file(char *p, const char *fn) {
     FILE *f;
     struct zsync_state *zs;
     char *lastpath = NULL;
@@ -191,8 +191,8 @@ struct zsync_state *read_zsync_control_file(const char *p, const char *fn) {
         }
         referer = p; // ###
         redirected = lastpath;
-        fprintf(stderr, "\n### Leaving referer as %s\n", p);
-        fprintf(stderr, "\n### Setting redirected to %s\n", p);
+        if (getenv("CURLOPT_VERBOSE")!=NULL) fprintf(stderr, "\n### Leaving referer as %s\n", p);
+        if (getenv("CURLOPT_VERBOSE")!=NULL) fprintf(stderr, "\n### Setting redirected to %s\n", p);
     }
 
     /* Read the .zsync */
@@ -299,7 +299,8 @@ int fetch_remaining_blocks_http(struct zsync_state *z, const char *url,
     /* URL might be relative - we need an absolute URL to do a fetch */
     
     char *u;
-    fprintf(stderr, "\n###  make_url_absolute(%s, %s)\n", referer, url);
+    fprintf(stderr, "\n### make_url_absolute(%s, %s)\n", referer, url);
+    u = make_url_absolute(referer, url);
     if (use_redirected == 1) {
         CURL *curl;
         CURLcode res;
@@ -308,7 +309,7 @@ int fetch_remaining_blocks_http(struct zsync_state *z, const char *url,
         curl_easy_setopt( curl, CURLOPT_URL, url );
         curl_easy_perform( curl );
         if (curl) {         
-            setup_curl_handle(curl);
+            void setup_curl_handle(curl);
             res = curl_easy_getinfo( curl, CURLINFO_REDIRECT_URL, &redirected_payload_url );
             if(res != CURLE_OK) {
                 fprintf(stderr, "Could not get last effective URL: %s\n", curl_easy_strerror(res));
@@ -316,18 +317,14 @@ int fetch_remaining_blocks_http(struct zsync_state *z, const char *url,
             }
                 else
             {
-                fprintf(stderr, "Redirected payload URL: %s\n", redirected_payload_url);
-                fprintf(stderr, "\n###  make_url_absolute(%s, %s)\n", redirected, redirected_payload_url);
+                if (getenv("CURLOPT_VERBOSE")!=NULL) fprintf(stderr, "### Redirected payload URL: %s\n", redirected_payload_url);
+                if (getenv("CURLOPT_VERBOSE")!=NULL) fprintf(stderr, "\n### make_url_absolute(%s, %s)\n", redirected, redirected_payload_url);
                 u = make_url_absolute(redirected, redirected_payload_url);
             }
             curl_easy_cleanup( curl );
         }
     }
-    else
-    {
-        fprintf(stderr, "\n###  make_url_absolute(%s, %s)\n", referer, url);
-        u = make_url_absolute(referer, url);
-    }
+
     if (!u) {
         fprintf(stderr,
                 "URL '%s' from the .zsync file is relative, but I don't know the referer URL (you probably downloaded the .zsync separately and gave it to me as a file). I need to know the referring URL (the URL of the .zsync) in order to locate the download. You can specify this with -u (or edit the URL line(s) in the .zsync file you have).\n",
@@ -449,7 +446,7 @@ int fetch_remaining_blocks(struct zsync_state *zs) {
 
         if (!status[try]) {
             const char *tryurl = url[try];
-            fprintf(stderr, "\n###  fetch from %s ### USE THE REDIRECTED URL IN MAKE-ABSOLUTE FROM NOW ON\n)", tryurl);
+            if (getenv("CURLOPT_VERBOSE")!=NULL) fprintf(stderr, "\n### fetch from %s ### USE THE REDIRECTED URL FROM NOW ON\n)", tryurl);
             use_redirected=1;
             /* Try fetching data from this URL */
             int rc = fetch_remaining_blocks_http(zs, tryurl, utype);
@@ -709,8 +706,8 @@ int main(int argc, char **argv) {
     /* Final stats and cleanup */
     if (!no_progress)
         printf("used %lld local, fetched %lld\n", local_used, http_down);
-    free(referer);
-    free(redirected);
+    // free(referer); // Crashes
+    // free(redirected);
     free(temp_file);
     return 0;
 }
