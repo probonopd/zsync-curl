@@ -307,14 +307,13 @@ int fetch_remaining_blocks_http(struct zsync_state *z, const char *url,
         CURLcode res;
         char *redirected_payload_url;
         curl = curl_easy_init();
-        curl_easy_setopt( curl, CURLOPT_URL, url );
-        curl_easy_perform( curl );
-        if (curl) {         
-            void setup_curl_handle(curl);
+        curl_easy_setopt(curl, CURLOPT_URL, u);
+        curl_easy_perform(curl);
+        if (curl) {
             res = curl_easy_getinfo( curl, CURLINFO_REDIRECT_URL, &redirected_payload_url );
             if(res != CURLE_OK) {
                 fprintf(stderr, "Could not get last effective URL: %s\n", curl_easy_strerror(res));
-                u = make_url_absolute(referer, url);
+                u = make_url_absolute(referer, u);
             }
                 else
             {
