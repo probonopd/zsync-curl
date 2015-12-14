@@ -17,6 +17,8 @@
 
 
 extern char *referer;
+extern char *redirected;
+extern int use_redirected;
 extern int http_ssl_insecure;
 extern char *cookie;
 
