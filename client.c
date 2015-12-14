@@ -30,6 +30,8 @@
 #include <sys/stat.h>
 #include <utime.h>
 
+#include <curl/curl.h>
+
 #ifdef WITH_DMALLOC
 # include <dmalloc.h>
 #endif
@@ -299,14 +301,31 @@ int fetch_remaining_blocks_http(struct zsync_state *z, const char *url,
     char *u;
     fprintf(stderr, "\n###  make_url_absolute(%s, %s)\n", referer, url);
     if (use_redirected == 1) {
-        fprintf(stderr, "\n###  NOW I SHOUD USE THE REDIRECTED URL OF THE PAYLOAD FILE (NOT THE ZISO FILE!) WHICH I DO NOT HAVE. BEFORE WE MAKE RANGE REQUESTS WE SHOULD GET THE REAL URL. HOW?\n", "");
-        u = make_url_absolute(redirected, url);
-        // ### IF I MANUALLY SET u TO THE REDIRECTED URL OF THE URL FROM WHICH WE range_fetch_start(u) THEN IT WORKS
-        // BUT I DO NOT KNOW HOW TO GET THE REDIRECTED URL OF THAT.
-        fprintf(stderr, "\n###  make_url_absolute(%s, %s)\n", redirected, url);
+        CURL *curl;
+        CURLcode res;
+        char *redirected_payload_url;
+        curl = curl_easy_init();
+        curl_easy_setopt( curl, CURLOPT_URL, url );
+        curl_easy_perform( curl );
+        if (curl) {         
+            setup_curl_handle(curl);
+            res = curl_easy_getinfo( curl, CURLINFO_REDIRECT_URL, &redirected_payload_url );
+            if(res != CURLE_OK) {
+                fprintf(stderr, "Could not get last effective URL: %s\n", curl_easy_strerror(res));
+                u = make_url_absolute(referer, url);
+            }
+                else
+            {
+                fprintf(stderr, "Redirected payload URL: %s\n", redirected_payload_url);
+                fprintf(stderr, "\n###  make_url_absolute(%s, %s)\n", redirected, redirected_payload_url);
+                u = make_url_absolute(redirected, redirected_payload_url);
+            }
+            curl_easy_cleanup( curl );
+        }
     }
     else
     {
+        fprintf(stderr, "\n###  make_url_absolute(%s, %s)\n", referer, url);
         u = make_url_absolute(referer, url);
     }
     if (!u) {
@@ -430,7 +449,7 @@ int fetch_remaining_blocks(struct zsync_state *zs) {
 
         if (!status[try]) {
             const char *tryurl = url[try];
-            fprintf(stderr, "\n###  fetch from %s ### USE THE REDIRECTED URL IN MAKE-ABSOLUTE FROM NOW ON - THE PITY IS THAT I DON'T HAVE THE REDIRECTED URL FOR THE PAYLOAD FILE BUT ONLY FOR THE ZSYNC FILE URL IN THE VARIABLE redirected\n)", tryurl);
+            fprintf(stderr, "\n###  fetch from %s ### USE THE REDIRECTED URL IN MAKE-ABSOLUTE FROM NOW ON\n)", tryurl);
             use_redirected=1;
             /* Try fetching data from this URL */
             int rc = fetch_remaining_blocks_http(zs, tryurl, utype);
