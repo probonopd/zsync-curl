@@ -8,7 +8,6 @@ which apt-get && ( which gcc || sudo apt-get -y install gcc )
 which yum && ( pkg-config --libs libcurl || sudo yum -y install libcurl-devel )
 which yum && ( which gcc || sudo yum -y install gcc )
 
-sudo apt-get -y install libcurl4-gnutls-dev
-cd src/
+cd "$(dirname "${0}")/src"
 ./configure && make && sudo make install
 cd -
