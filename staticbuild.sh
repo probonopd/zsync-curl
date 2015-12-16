@@ -1,6 +1,9 @@
 #!/bin/bash
 
 # Build in a way to support SSH but minimize dependencies
+# GLIBC_2.14 is needed at the moment because wolfssl seems to need it
+# When using LibcWrapGenerator I get
+# libzsync/sha1.c:152: undefined reference to `memcpy@GLIBC_DONT_USE_THIS_VERSION_2.14'
 
 # If we are running a system with apt-get and missing dependencies, install them
 which apt-get && ( sudo apt-get -y install automake autoreconf libtool )
@@ -9,8 +12,6 @@ which apt-get && ( which gcc || sudo apt-get -y install gcc )
 # If we are running a system with yum and missing dependencies, install them
 which yum && ( sudo yum -y install automake autoreconf libtool )
 which yum && ( which gcc || sudo yum -y install gcc )
-
-export CC='gcc -U_FORTIFY_SOURCE -include /usr/include/libcwrap.h'
 
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig/
 
@@ -61,3 +62,6 @@ ldd zsync_curl
 #	libc.so.6 => /lib64/libc.so.6 (0x00007f0074138000)
 #	libpthread.so.0 => /lib64/libpthread.so.0 (0x00007f0073f1b000)
 #	/lib64/ld-linux-x86-64.so.2 (0x00005559e4b83000)
+
+strings zsync_curl | grep GLIBC_ | sort -V | tail -n 1
+# GLIBC_2.14
