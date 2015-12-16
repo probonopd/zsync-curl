@@ -2,12 +2,19 @@
 
 # Build in a way to support SSH but minimize dependencies
 
+# If we are running a system with apt-get and missing dependencies, install them
+which apt-get && ( sudo apt-get -y install automake autoreconf libtool )
+which apt-get && ( which gcc || sudo apt-get -y install gcc )
+
+# If we are running a system with yum and missing dependencies, install them
+which yum && ( sudo yum -y install automake autoreconf libtool )
+which yum && ( which gcc || sudo yum -y install gcc )
+
 export CC='gcc -U_FORTIFY_SOURCE -include /usr/include/libcwrap.h'
 
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig/
 
 # Build wolfssl
-automake autoreconf libtool
 git clone https://github.com/wolfSSL/wolfssl.git
 cd wolfssl/
 ./autogen.sh
