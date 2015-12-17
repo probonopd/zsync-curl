@@ -10,7 +10,7 @@ which apt-get && ( sudo apt-get -y install automake autoreconf libtool )
 which apt-get && ( which gcc || sudo apt-get -y install gcc )
 
 # If we are running a system with yum and missing dependencies, install them
-which yum && ( sudo yum -y install automake autoreconf libtool )
+which yum && ( sudo yum -y install automake autoconf libtool )
 which yum && ( which gcc || sudo yum -y install gcc )
 
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig/

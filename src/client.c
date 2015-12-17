@@ -309,6 +309,10 @@ int fetch_remaining_blocks_http(struct zsync_state *z, const char *url,
         curl = curl_easy_init();
         curl_easy_setopt(curl, CURLOPT_URL, u);
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1u);
+        if(http_ssl_insecure){
+            curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
+            curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);
+        }
         // CURLOPT_NOBODY would result in a HEAD rather than GET request
         // to which some servers respond differently; hence we cannot use it
         curl_easy_setopt(curl, CURLOPT_RANGE, "0-0"); // Replacement for CURLOPT_NOBODY 
