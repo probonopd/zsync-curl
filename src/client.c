@@ -565,6 +565,7 @@ int main(int argc, char **argv) {
     temp_file = malloc(strlen(filename) + 6);
     strcpy(temp_file, filename);
     strcat(temp_file, ".part");
+    fprintf(stdout, "Target %s\n", filename);
 
     {   /* STEP 2: read available local data and fill in what we know in the
          *target file */
