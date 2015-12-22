@@ -6,7 +6,7 @@
 # libzsync/sha1.c:152: undefined reference to `memcpy@GLIBC_DONT_USE_THIS_VERSION_2.14'
 
 # If we are running a system with apt-get and missing dependencies, install them
-which apt-get && ( sudo apt-get -y install automake autoreconf libtool )
+which apt-get && ( sudo apt-get -y install automake autoconf libtool )
 which apt-get && ( which gcc || sudo apt-get -y install gcc )
 
 # If we are running a system with yum and missing dependencies, install them
