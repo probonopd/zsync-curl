@@ -20,7 +20,7 @@ git clone https://github.com/probonopd/zsync-curl.git
 To build a deb:
 
 ```
-sudo apt-get -y install devscripts autotools-dev libcurl4-openssl-dev git debhelper
+sudo apt-get -y install autotools-dev libcurl4-openssl-dev git debhelper
 git clone https://github.com/probonopd/zsync-curl.git
 cd ./zsync-curl/src
 debuild -i -us -uc -b
