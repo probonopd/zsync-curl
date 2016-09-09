@@ -41,7 +41,7 @@ sudo ldconfig
 cd src
 
 ./configure 
-make
+make || true
 
 # This builds against the wrong (non-static) system-provided libcurl, 
 # but we can do the final step manually (FIXME):
