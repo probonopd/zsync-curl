@@ -39,7 +39,7 @@ cd -
 sudo ldconfig
 
 cd src
-
+export CFLAGS=--std=c99 # zsync_curl does not compile if the compiler is not explicitly told that this is c99 code 
 ./configure 
 make || true
 
