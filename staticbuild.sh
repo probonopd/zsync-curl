@@ -38,7 +38,7 @@ cd -
 
 sudo ldconfig
 
-cd zsync-curl/src
+cd src
 
 ./configure 
 make
