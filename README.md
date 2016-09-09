@@ -1,4 +1,4 @@
-# zsync-curl
+# zsync-curl [![Build Status](https://travis-ci.org/probonopd/zsync-curl.svg?branch=master)](https://travis-ci.org/probonopd/zsync-curl)
 
 Partial/differential file download client over HTTP(S).
 
