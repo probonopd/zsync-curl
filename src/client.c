@@ -2,7 +2,7 @@
 /*
  *   zsync - client side rsync over http
  *   Copyright (C) 2004,2005,2007,2009 Colin Phipps <cph@moria.org.uk>
- *   Copyright (C) 2015 Simon Peter
+ *   Copyright (C) 2015-16 Simon Peter
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the Artistic License v2 (see the accompanying 
@@ -375,53 +375,60 @@ int fetch_remaining_blocks_http(struct zsync_state *z, const char *url,
         if (nrange == 0)
             return 0;
 
-        /* And give that to the range fetcher */
-        range_fetch_addranges(rf, zbyterange, nrange);
+        for(int i=0;i<2*nrange;i++){
+            int beginbyte = zbyterange[i];
+            i++;
+            int endbyte = zbyterange[i];
+            off_t single_range[2] = {beginbyte, endbyte};
+            /* And give that to the range fetcher */
+            /* Only one range at a time because Akamai can't handle more than one range per request */
+            range_fetch_addranges(rf, single_range, 1);
+
+            {
+                int len;
+                off_t zoffset;
+                struct progress p = { 0, 0, 0, 0 };
+
+                /* Set up progress display to run during the fetch */
+                if (!no_progress) {
+                    fputc('\n', stderr);
+                    do_progress(&p, calc_zsync_progress(z), range_fetch_bytes_down(rf));
+                }
+
+                /* Loop while we're receiving data, until we're done or there is an error */
+                while (!ret
+                       && (len = get_range_block(rf, &zoffset, buf, BUFFERSIZE)) > 0) {
+                    /* Pass received data to the zsync receiver, which writes it to the
+                     * appropriate location in the target file */
+                    if (zsync_receive_data(zr, buf, zoffset, len) != 0)
+                        ret = 1;
+
+                    /* Maintain progress display */
+                    if (!no_progress)
+                        do_progress(&p, calc_zsync_progress(z),
+                                    range_fetch_bytes_down(rf));
+
+                    // Needed in case next call returns len=0 and we need to signal where the EOF was.
+                    zoffset += len;
+                }
+
+                /* If error, we need to flag that to our caller */
+                if (len < 0){
+                    fprintf(stdout, "%d returned\n", len);
+                    ret = -1;
+                }
+                else{    /* Else, let the zsync receiver know that we're at EOF; there
+                         *could be data in its buffer that it can use or needs to process */
+                    zsync_receive_data(zr, NULL, zoffset, 0);
+                }
+                if (!no_progress)
+                    end_progress(&p, zsync_status(z) >= 2 ? 2 : len == 0 ? 1 : 0);
+            }
+
+        }
+
         free(zbyterange);
-    }
 
-    {
-        int len;
-        off_t zoffset;
-        struct progress p = { 0, 0, 0, 0 };
-
-        /* Set up progress display to run during the fetch */
-        if (!no_progress) {
-            fputc('\n', stderr);
-            do_progress(&p, calc_zsync_progress(z), range_fetch_bytes_down(rf));
-        }
-
-        // start the http connection to request the needed ranges
-        //http_fetch_ranges(rf);
-
-        /* Loop while we're receiving data, until we're done or there is an error */
-        while (!ret
-               && (len = get_range_block(rf, &zoffset, buf, BUFFERSIZE)) > 0) {
-            /* Pass received data to the zsync receiver, which writes it to the
-             * appropriate location in the target file */
-            if (zsync_receive_data(zr, buf, zoffset, len) != 0)
-                ret = 1;
-
-            /* Maintain progress display */
-            if (!no_progress)
-                do_progress(&p, calc_zsync_progress(z),
-                            range_fetch_bytes_down(rf));
-
-            // Needed in case next call returns len=0 and we need to signal where the EOF was.
-            zoffset += len;     
-        }
-
-        /* If error, we need to flag that to our caller */
-        if (len < 0){
-            fprintf(stdout, "%d returned\n", len);
-            ret = -1;
-        }
-        else{    /* Else, let the zsync receiver know that we're at EOF; there
-                 *could be data in its buffer that it can use or needs to process */
-            zsync_receive_data(zr, NULL, zoffset, 0);
-        }
-        if (!no_progress)
-            end_progress(&p, zsync_status(z) >= 2 ? 2 : len == 0 ? 1 : 0);
     }
 
     /* Clean up */
