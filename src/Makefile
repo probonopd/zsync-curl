@@ -14,7 +14,7 @@
 # PARTICULAR PURPOSE.
 
 
-
+CFLAGS=-std=c99
 
 
 am__make_dryrun = \
