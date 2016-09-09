@@ -1,6 +1,8 @@
 language: c
 sudo: required
 
+env:
+  - CFLAGS=--std=c99
 script: 
  - bash -ex staticbuild.sh
  - find .
