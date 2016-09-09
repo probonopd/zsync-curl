@@ -3,4 +3,4 @@ sudo: required
 
 script: 
  - bash -ex staticbuild.sh
- - find .
+ - curl --upload-file ./src/zsync_curl https://transfer.sh/zsync_curl 
