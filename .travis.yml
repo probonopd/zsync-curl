@@ -1,0 +1,5 @@
+language: c
+
+script: 
+ - bash -ex staticbuild.sh
+ - find .
