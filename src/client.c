@@ -43,9 +43,13 @@
 #include "url.h"
 #include "progress.h"
 
-// https://curl.haxx.se/libcurl/c/getredirect.html
-// TODO: Reject any body coming in -
-// write the function that receives the data, make that return an error and then it will stop
+
+/* char* get_redirected_url(const char *url)
+ * Returns the URL where url redirects to.
+ * Based on https://curl.haxx.se/libcurl/c/getredirect.html
+ * TODO: Currently can dump the body to stdout; FIXME: Reject any body coming in -
+ * write the function that receives the data, make that return an error and then it will stop
+ */
 char* get_redirected_url(const char *url)
 {
     CURL *curl;
