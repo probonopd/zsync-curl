@@ -60,6 +60,9 @@ char* get_redirected_url(const char *url)
     curl = curl_easy_init();
     if(curl) {
       curl_easy_setopt(curl, CURLOPT_URL, url);
+      // FIXME: The two next lines are to prevent from "curl_easy_perform() failed: Problem with the SSL CA cert (path? access rights?)"
+      curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+      curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
       res = curl_easy_perform(curl);
       if(res != CURLE_OK)
         fprintf(stderr, "curl_easy_perform() failed: %s\n",
