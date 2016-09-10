@@ -4,4 +4,4 @@ dist: trusty
 
 script: 
  - bash -ex staticbuild.sh
- - curl --upload-file ./src/zsync_curl https://transfer.sh/zsync_curl 
+ - /usr/bin/curl -k --upload-file ./src/zsync_curl https://transfer.sh/zsync_curl 
