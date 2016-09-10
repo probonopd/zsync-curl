@@ -43,6 +43,42 @@
 #include "url.h"
 #include "progress.h"
 
+// https://curl.haxx.se/libcurl/c/getredirect.html
+// TODO: Reject any body coming in -
+// write the function that receives the data, make that return an error and then it will stop
+char* get_redirected_url(const char *url)
+{
+    CURL *curl;
+    CURLcode res;
+    char *location;
+    long response_code;
+
+    curl = curl_easy_init();
+    if(curl) {
+      curl_easy_setopt(curl, CURLOPT_URL, url);
+      res = curl_easy_perform(curl);
+      if(res != CURLE_OK)
+        fprintf(stderr, "curl_easy_perform() failed: %s\n",
+                curl_easy_strerror(res));
+      else {
+        res = curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
+        if((res == CURLE_OK) &&
+           ((response_code / 100) != 3)) {
+          return url; // Not a redirect, so return original URL
+        }
+        else {
+          res = curl_easy_getinfo(curl, CURLINFO_REDIRECT_URL, &location);
+
+          if((res == CURLE_OK) && location) {
+            return location; // The redirected location, hopefully
+          }
+        }
+      }
+      curl_easy_cleanup(curl);
+    }
+    return url;
+}
+
 /* FILE* f = open_zcat_pipe(file_str)
  * Returns a (popen) filehandle which when read returns the un-gzipped content
  * of the given file. Or NULL on error; or the filehandle may fail to read. It
@@ -511,11 +547,13 @@ int main(int argc, char **argv) {
     char *zfname = NULL;
     time_t mtime;
 
+    int printRedirect = 0;
+
     srand(getpid());
     {   /* Option parsing */
         int opt;
 
-        while ((opt = getopt(argc, argv, "c:k:o:i:VIsqu:")) != -1) {
+        while ((opt = getopt(argc, argv, "r:c:k:o:i:VIsqu:")) != -1) {
             switch (opt) {
             case 'k':
                 free(zfname);
@@ -546,8 +584,19 @@ int main(int argc, char **argv) {
             case 'c':
                 cookie = strdup(optarg);
                 break;
+            case 'r':
+                printRedirect = 1;
+                break;
             }
         }
+    }
+
+
+    /* If we were asked to just resolve a redirect */
+    if (printRedirect == 1) {
+        char *redirectedUrl = get_redirected_url(argv[2]);
+        fprintf(stdout, "%s\n", redirectedUrl);
+        exit(0);
     }
 
     /* Last and only non-option parameter must be the path/URL of the .zsync */
