@@ -3,5 +3,5 @@ sudo: required
 dist: trusty
 
 script: 
- - bash -ex staticbuild.sh
+ - bash -ex build.sh
  - /usr/bin/curl -k --upload-file ./src/zsync_curl https://transfer.sh/zsync_curl 
