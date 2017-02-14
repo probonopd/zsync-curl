@@ -11,5 +11,6 @@ which yum && ( pkg-config --libs libcurl || sudo yum -y install libcurl-devel )
 which yum && ( which gcc || sudo yum -y install gcc )
 
 cd "$(dirname "${0}")/src"
+export CFLAGS=--std=c99 # zsync_curl does not compile if the compiler is not explicitly told that this is c99 code 
 ./configure && make && sudo make install
 cd -
