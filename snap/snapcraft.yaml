@@ -1,0 +1,23 @@
+name: zsync-curl
+version: master
+summary: Partial/differential file download client over HTTP(S)
+description: |
+  Downloads a file over HTTP(S). zsync uses a control file to determine
+  whether any blocks in the file are already known to the downloader, and only
+  downloads the new blocks.
+
+grade: stable
+confinement: strict
+
+apps:
+  zsync-curl:
+    command: zsync_curl
+    plugs: [home, network]
+
+parts:
+  zsync-curl:
+    source: .
+    source-subdir: src
+    plugin: autotools
+    build-packages: [gcc]
+    stage-packages: [libcurl4-gnutls-dev]
