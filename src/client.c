@@ -419,9 +419,9 @@ int fetch_remaining_blocks_http(struct zsync_state *z, const char *url,
             return 0;
 
         for(int i=0;i<2*nrange;i++){
-            int beginbyte = zbyterange[i];
+            int64_t beginbyte = zbyterange[i];
             i++;
-            int endbyte = zbyterange[i];
+            int64_t endbyte = zbyterange[i];
             off_t single_range[2] = {beginbyte, endbyte};
             /* And give that to the range fetcher */
             /* Only one range at a time because Akamai can't handle more than one range per request */
