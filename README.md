@@ -1,4 +1,4 @@
-# zsync-curl [![Build Status](https://travis-ci.org/probonopd/zsync-curl.svg?branch=master)](https://travis-ci.org/probonopd/zsync-curl)
+# zsync-curl [![Build Status](https://travis-ci.org/AppImage/zsync-curl.svg?branch=master)](https://travis-ci.org/AppImage/zsync-curl)
 
 Partial/differential file download client over HTTP(S).
 
@@ -13,7 +13,7 @@ This fork uses [libcurl](http://curl.haxx.se/libcurl/) in order to support __HTT
 To build and install locally:
 ```
 sudo apt-get -y install git devscripts autotools-dev libcurl4-openssl-dev
-git clone https://github.com/probonopd/zsync-curl.git
+git clone https://github.com/AppImage/zsync-curl.git
 ./zsync-curl/build.sh
 ```
 
@@ -21,7 +21,7 @@ To build a deb:
 
 ```
 sudo apt-get -y install autotools-dev libcurl4-openssl-dev git debhelper
-git clone https://github.com/probonopd/zsync-curl.git
+git clone https://github.com/AppImage/zsync-curl.git
 cd ./zsync-curl/src
 debuild -i -us -uc -b
 cd -
