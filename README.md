@@ -42,3 +42,8 @@ zsync_curl https://bintray.com/artifact/download/probono/AppImages/Scribus-1.5.1
 ```
 
 In this example, 94% of the data can be taken from the existing local file, and only 6% need to be downloaded.
+
+## Projects using zsync-curl
+
+* https://github.com/AppImage/AppImageUpdate
+* https://github.com/apachelogger/kde-os-autoinst
