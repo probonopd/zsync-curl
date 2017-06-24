@@ -82,14 +82,17 @@ FILE *optimal_gzip(FILE * ffin, const char *fout, size_t blocksize) {
     /* Write gzip header */
     if (fwrite("\x1f\x8b\x08\x00", 4, 1, ffout) != 1) {
         perror("write");
+        fclose(ffout);
         return NULL;
     }
     if (fputlong(ffout, mtime) == -1) {
         perror("write");
+        fclose(ffout);
         return NULL;
     }
     if (fwrite("\x00\x03", 2, 1, ffout) != 1) {
         perror("write");
+        fclose(ffout);
         return NULL;
     }
 
@@ -150,10 +153,12 @@ FILE *optimal_gzip(FILE * ffin, const char *fout, size_t blocksize) {
         /* Write gzip footer */
         if (fputlong(ffout, crc) == -1) {
             perror("write");
+            fclose(ffout);
             return NULL;
         }
         if (fputlong(ffout, zs.total_in) == -1) {
             perror("write");
+            fclose(ffout);
             return NULL;
         }
 
