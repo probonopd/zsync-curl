@@ -555,12 +555,13 @@ int main(int argc, char **argv) {
     time_t mtime;
 
     int printRedirect = 0;
+    int justCheckForUpdates = 0;
 
     srand(getpid());
     {   /* Option parsing */
         int opt;
 
-        while ((opt = getopt(argc, argv, "r:c:k:o:i:VIsqu:")) != -1) {
+        while ((opt = getopt(argc, argv, "r:c:k:o:i:VIsqju:")) != -1) {
             switch (opt) {
             case 'k':
                 free(zfname);
@@ -593,6 +594,9 @@ int main(int argc, char **argv) {
                 break;
             case 'r':
                 printRedirect = 1;
+                break;
+            case 'j':
+                justCheckForUpdates = 1;
                 break;
             }
         }
@@ -676,6 +680,23 @@ int main(int argc, char **argv) {
                 fputs
                     ("No relevent local data found - I will be downloading the whole file. If that's not what you want, CTRL-C out. You should specify the local file is the old version of the file to download with -i (you might have to decompress it with gzip -d first). Or perhaps you just have no data that helps download the file\n",
                      stderr);
+        }
+    }
+
+    /* In case the user just wants to check whether there is an update available,
+     * report with the exit code the result:
+     *      0 if file is already updated
+     *      1 if file needs to be updated
+     */
+    if (justCheckForUpdates) {
+        if (zsync_status(zs) >= 2) {
+            if (!no_progress)
+                printf("There is no need to download new data\n");
+            exit(0);
+        } else {
+            if (!no_progress)
+                printf("File is outdated. New data needs to be downloaded\n");
+            exit(1);
         }
     }
 
