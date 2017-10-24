@@ -72,6 +72,13 @@ off_t* zsync_needed_byte_ranges(struct zsync_state* zs, int* num, int type);
  * Returns -1 for failure, 1 for success, 0 for unable to verify (e.g. no checksum in the .zsync) */
 int zsync_complete(struct zsync_state* zs);
 
+/* zsync_sha1(self, filedesc)
+ * Given the currently-open-and-at-start-of-file complete local copy of the
+ * target, read it and compare the SHA1 checksum with the one from the .zsync.
+ * Returns -1 or 1 as per zsync_complete.
+ */
+int zsync_sha1(struct zsync_state *zs, int fh);
+
 /* Clean up and free all resources. The pointer is freed by this call.
  * Returns a strdup()d pointer to the name of the file resulting from the process. */
 char* zsync_end(struct zsync_state* zs);

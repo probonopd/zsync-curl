@@ -634,6 +634,30 @@ int main(int argc, char **argv) {
     strcat(temp_file, ".part");
     fprintf(stdout, "Target %s\n", filename);
 
+    /* In case the user just wants to check whether there is an update available,
+     * report with the exit code the result:
+     *      0 if file is already updated
+     *      1 if file needs to be updated
+     */
+    if (justCheckForUpdates) {
+        int fd = open(filename, O_RDONLY);
+        if (fd < 0) {
+            printf("Error reading seed file %s. The whole file needs to be downloaded\n", filename);
+            exit(1);
+        }
+
+        int ret = zsync_sha1(zs, fd);
+        if (ret == 1) {
+            if (!no_progress)
+                printf("There is no need to download new data\n");
+            exit(0);
+        } else {
+            if (!no_progress)
+                printf("File is outdated. New data needs to be downloaded\n");
+            exit(1);
+        }
+    }
+
     {   /* STEP 2: read available local data and fill in what we know in the
          *target file */
         int i;
@@ -680,23 +704,6 @@ int main(int argc, char **argv) {
                 fputs
                     ("No relevent local data found - I will be downloading the whole file. If that's not what you want, CTRL-C out. You should specify the local file is the old version of the file to download with -i (you might have to decompress it with gzip -d first). Or perhaps you just have no data that helps download the file\n",
                      stderr);
-        }
-    }
-
-    /* In case the user just wants to check whether there is an update available,
-     * report with the exit code the result:
-     *      0 if file is already updated
-     *      1 if file needs to be updated
-     */
-    if (justCheckForUpdates) {
-        if (zsync_status(zs) >= 2) {
-            if (!no_progress)
-                printf("There is no need to download new data\n");
-            exit(0);
-        } else {
-            if (!no_progress)
-                printf("File is outdated. New data needs to be downloaded\n");
-            exit(1);
         }
     }
 
