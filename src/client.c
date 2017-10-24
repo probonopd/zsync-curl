@@ -555,12 +555,13 @@ int main(int argc, char **argv) {
     time_t mtime;
 
     int printRedirect = 0;
+    int justCheckForUpdates = 0;
 
     srand(getpid());
     {   /* Option parsing */
         int opt;
 
-        while ((opt = getopt(argc, argv, "r:c:k:o:i:VIsqu:")) != -1) {
+        while ((opt = getopt(argc, argv, "r:c:k:o:i:VIsqju:")) != -1) {
             switch (opt) {
             case 'k':
                 free(zfname);
@@ -593,6 +594,9 @@ int main(int argc, char **argv) {
                 break;
             case 'r':
                 printRedirect = 1;
+                break;
+            case 'j':
+                justCheckForUpdates = 1;
                 break;
             }
         }
@@ -629,6 +633,30 @@ int main(int argc, char **argv) {
     strcpy(temp_file, filename);
     strcat(temp_file, ".part");
     fprintf(stdout, "Target %s\n", filename);
+
+    /* In case the user just wants to check whether there is an update available,
+     * report with the exit code the result:
+     *      0 if file is already updated
+     *      1 if file needs to be updated
+     */
+    if (justCheckForUpdates) {
+        int fd = open(filename, O_RDONLY);
+        if (fd < 0) {
+            printf("Error reading seed file %s. The whole file needs to be downloaded\n", filename);
+            exit(1);
+        }
+
+        int ret = zsync_sha1(zs, fd);
+        if (ret == 1) {
+            if (!no_progress)
+                printf("There is no need to download new data\n");
+            exit(0);
+        } else {
+            if (!no_progress)
+                printf("File is outdated. New data needs to be downloaded\n");
+            exit(1);
+        }
+    }
 
     {   /* STEP 2: read available local data and fill in what we know in the
          *target file */

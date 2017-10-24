@@ -31,7 +31,7 @@ export CFLAGS=--std=c99 # zsync_curl does not compile if the compiler is not exp
 ./configure 
 make || true
 
-gcc -g -O2 -g -Wall -Wwrite-strings -Winline -Wextra -Winline -Wmissing-noreturn -Wredundant-decls -Wnested-externs -Wundef -Wbad-function-cast -Wcast-align -Wvolatile-register-var -ffast-math   -o zsync_curl client.o http.o url.o progress.o base64.o libzsync/libzsync.a librcksum/librcksum.a zlib/libinflate.a /usr/local/lib/libcurl.a -lssl -lcrypto -lrt -lm
+gcc -g -O2 -g -Wall -Wwrite-strings -Winline -Wextra -Winline -Wmissing-noreturn -Wredundant-decls -Wnested-externs -Wundef -Wbad-function-cast -Wcast-align -Wvolatile-register-var -ffast-math -pthread -o zsync_curl client.o http.o url.o progress.o base64.o libzsync/libzsync.a librcksum/librcksum.a zlib/libinflate.a /usr/local/lib/libcurl.a -lssl -lcrypto -lrt -lm
 
 strip zsync_curl
 

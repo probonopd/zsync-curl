@@ -48,7 +48,7 @@ make || true
 # If we had built wolfssl without the "--disable-shared" above, we could now 
 # use libwolfssl.so instead of libwolfssl.a and get a dependency on libwolfssl.so
 # which would save around 300K in the binary but add a 400K dependency
-gcc -g -O2 -g -Wall -Wwrite-strings -Winline -Wextra -Winline -Wmissing-noreturn -Wredundant-decls -Wnested-externs -Wundef -Wbad-function-cast -Wcast-align -Wvolatile-register-var -ffast-math   -o zsync_curl client.o http.o url.o progress.o base64.o libzsync/libzsync.a librcksum/librcksum.a zlib/libinflate.a /usr/local/lib/libcurl.a /usr/local/lib/libwolfssl.a -lrt -lm
+gcc -g -O2 -g -Wall -Wwrite-strings -Winline -Wextra -Winline -Wmissing-noreturn -Wredundant-decls -Wnested-externs -Wundef -Wbad-function-cast -Wcast-align -Wvolatile-register-var -ffast-math -pthread -o zsync_curl client.o http.o url.o progress.o base64.o libzsync/libzsync.a librcksum/librcksum.a zlib/libinflate.a /usr/local/lib/libcurl.a /usr/local/lib/libwolfssl.a -lrt -lm
 
 strip zsync_curl
 
