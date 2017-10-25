@@ -212,8 +212,11 @@ static void **append_ptrlist(int *n, void **p, void *a) {
  * Second parameter is a filename in which to locally save the content of the
  * .zsync _if it is retrieved from a URL_; can be NULL in which case no local
  * copy is made.
+ * Third parameter tells zsync_begin whether to compute the block sum or not.
+ * This is avoided when we just want to parse the zsync file since it avoids
+ * creating a temporary file and doing the extra work.
  */
-struct zsync_state *read_zsync_control_file(char *p, const char *fn) {
+struct zsync_state *read_zsync_control_file(char *p, const char *fn, int readBlockSums) {
     FILE *f;
     struct zsync_state *zs;
     char *lastpath = NULL;
@@ -240,7 +243,7 @@ struct zsync_state *read_zsync_control_file(char *p, const char *fn) {
     }
 
     /* Read the .zsync */
-    if ((zs = zsync_begin(f)) == NULL) {
+    if ((zs = zsync_begin(f, readBlockSums)) == NULL) {
         exit(1);
     }
 
@@ -623,7 +626,7 @@ int main(int argc, char **argv) {
     }
 
     /* STEP 1: Read the zsync control file */
-    if ((zs = read_zsync_control_file(argv[optind], zfname)) == NULL)
+    if ((zs = read_zsync_control_file(argv[optind], zfname, justCheckForUpdates ? 0 : 1)) == NULL)
         exit(1);
 
     /* Get eventual filename for output, and filename to write to while working */
@@ -643,7 +646,7 @@ int main(int argc, char **argv) {
         int fd = open(filename, O_RDONLY);
         if (fd < 0) {
             printf("Error reading seed file %s. The whole file needs to be downloaded\n", filename);
-            exit(1);
+            exit(2);
         }
 
         int ret = zsync_sha1(zs, fd);

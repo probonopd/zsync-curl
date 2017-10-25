@@ -137,7 +137,7 @@ static char **append_ptrlist(int *n, char **p, char *a) {
 }
 
 /* Constructor */
-struct zsync_state *zsync_begin(FILE * f) {
+struct zsync_state *zsync_begin(FILE * f, int readBlockSums) {
     /* Defaults for the checksum bytes and sequential matches properties of the
      * rcksum_state. These are the defaults from versions of zsync before these
      * were variable. */
@@ -307,9 +307,12 @@ struct zsync_state *zsync_begin(FILE * f) {
         free(zs);
         return NULL;
     }
-    if (zsync_read_blocksums(zs, f, rsum_bytes, checksum_bytes, seq_matches) != 0) {
-        free(zs);
-        return NULL;
+
+    if (readBlockSums) {
+        if (zsync_read_blocksums(zs, f, rsum_bytes, checksum_bytes, seq_matches) != 0) {
+            free(zs);
+            return NULL;
+        }
     }
     return zs;
 }

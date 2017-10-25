@@ -16,8 +16,9 @@
 struct zsync_state;
 
 /* zsync_begin - load a zsync file and return data structure to use for the rest of the process.
+ * readBlockSums should be 0 whenever we just want to parse the zsync file
  */
-struct zsync_state* zsync_begin(FILE* cf);
+struct zsync_state* zsync_begin(FILE* cf, int readBlockSums);
 
 /* zsync_hint_decompress - if it returns non-zero, this suggests that 
  *  compressed seed files should be decompressed */
