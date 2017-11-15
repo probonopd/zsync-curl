@@ -556,15 +556,17 @@ int main(int argc, char **argv) {
     long long local_used;
     char *zfname = NULL;
     time_t mtime;
+    char *zsync_url = NULL;
 
     int printRedirect = 0;
     int justCheckForUpdates = 0;
+    int followRedirect = 0;
 
     srand(getpid());
     {   /* Option parsing */
         int opt;
 
-        while ((opt = getopt(argc, argv, "r:c:k:o:i:VIsqju:")) != -1) {
+        while ((opt = getopt(argc, argv, "r:c:k:o:i:VIsqju:f")) != -1) {
             switch (opt) {
             case 'k':
                 free(zfname);
@@ -601,6 +603,9 @@ int main(int argc, char **argv) {
             case 'j':
                 justCheckForUpdates = 1;
                 break;
+            case 'f':
+                followRedirect = 1;
+                break;
             }
         }
     }
@@ -625,13 +630,21 @@ int main(int argc, char **argv) {
         exit(3);
     }
 
+    zsync_url = argv[optind];
+
+    /* Get the redirected URL in case we were asked to follow a redirect */
+    if (followRedirect) {
+        zsync_url = get_redirected_url(zsync_url);
+        fprintf(stdout, "Redirected URL: %s\n", zsync_url);
+    }
+
     /* STEP 1: Read the zsync control file */
-    if ((zs = read_zsync_control_file(argv[optind], zfname, justCheckForUpdates ? 0 : 1)) == NULL)
+    if ((zs = read_zsync_control_file(zsync_url, zfname, justCheckForUpdates ? 0 : 1)) == NULL)
         exit(1);
 
     /* Get eventual filename for output, and filename to write to while working */
     if (!filename)
-        filename = get_filename(zs, argv[optind]);
+        filename = get_filename(zs, zsync_url);
     temp_file = malloc(strlen(filename) + 6);
     strcpy(temp_file, filename);
     strcat(temp_file, ".part");
