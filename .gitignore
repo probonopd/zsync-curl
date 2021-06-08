@@ -1,15 +1,24 @@
-.cproject
-.dep/
-.project
-.settings/
-
-# files being edited
 *~
-
-# make and build files
-*.lst
+*.a
 *.o
-*.eep
-*.lss
-*.map
-*.sym
+.deps
+Makefile
+Makefile.in
+aclocal.m4
+autom4te.cache
+src/autotools/compile
+src/autotools/config.guess
+src/autotools/config.sub
+src/autotools/depcomp
+src/autotools/install-sh
+src/autotools/missing
+src/autotools/test-driver
+config.h
+config.h.in
+config.log
+config.status
+configure
+src/librcksum/md4test
+src/libzsync/sha1test
+stamp-h1
+zsync_curl
