@@ -18,11 +18,8 @@
 
 #include "zsglobal.h"
 
-#ifdef HAVE_INTTYPES_H
-#include <inttypes.h>
-#else
+#include <stdint.h>
 #include <sys/types.h>
-#endif
 
 #define	MD4_BLOCK_LENGTH		64
 #define	MD4_DIGEST_LENGTH		16
