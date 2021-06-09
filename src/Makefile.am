@@ -4,12 +4,15 @@ ACLOCAL_AMFLAGS = -I autotools
 
 SUBDIRS = librcksum zlib libzsync doc
 
-bin_PROGRAMS = zsync_curl
+bin_PROGRAMS = zsync_curl zsyncmake_curl
 
 zsync_curl_SOURCES = client.c http.c http.h url.c url.h progress.c progress.h base64.c format_string.h zsglobal.h
 zsync_curl_LDADD = libzsync/libzsync.a librcksum/librcksum.a zlib/libinflate.a $(LIBOBJS)
 
 EXTRA_zsync_curl_SOURCES = getaddrinfo.h
+
+zsyncmake_curl_SOURCES = make.c makegz.c makegz.h format_string.h
+zsyncmake_curl_LDADD = libzsync/libzsync.a librcksum/librcksum.a zlib/libinflate.a zlib/libdeflate.a -lm
 
 # From "GNU autoconf, automake and libtool" Vaughan, Elliston, 
 # #  Tromey and Taylor, publisher New Riders, p.134
