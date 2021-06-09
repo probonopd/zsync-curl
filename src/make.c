@@ -28,9 +28,6 @@
 #include <time.h>
 
 #include <arpa/inet.h>
-#ifdef HAVE_INTTYPES_H
-#include <inttypes.h>
-#endif
 
 #include <sys/types.h>
 #include <sys/stat.h>

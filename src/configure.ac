@@ -9,7 +9,6 @@ AC_CONFIG_MACRO_DIR([autotools])
 AC_CANONICAL_HOST
 
 AM_INIT_AUTOMAKE([dist-bzip2 no-dist-gzip foreign check-news -Woverride -Wobsolete -Wportability -Wsyntax -Wunsupported])
-AM_MAINTAINER_MODE
 
 dnl --- Check for programs
 AC_PROG_CC
@@ -23,6 +22,7 @@ AS_IF([test "x$enable_profile" = "xyes"], [
    ZS_CFLAGS="${ZS_CFLAGS} -pg" ])
 
 dnl --- Header files, typedefs, structures, libraries
+AC_USE_SYSTEM_EXTENSIONS
 AC_C_CONST
 AC_HEADER_STDC
 # string.h, memory.h, stdlib.h both included in the default header checks
@@ -54,10 +54,6 @@ case $host_os in
    mingw32)
        host_os_mingw32=yes
        LIBS="${LIBS} -lwsock32"
-       ;;
-   *)
-       AC_DEFINE([_XOPEN_SOURCE], 600, [Enable POSIX extensions if present])
-       AC_DEFINE([_BSD_SOURCE],1, [Enable BSD extensions if present])
        ;;
 esac
 AM_CONDITIONAL([MINGW32], test "x$host_os_mingw32" = "xyes")
