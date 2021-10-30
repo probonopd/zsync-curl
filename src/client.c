@@ -570,6 +570,28 @@ static int set_mtime(char* filename, time_t mtime) {
     return 0;
 }
 
+void display_help(int argc, char**argv)
+{
+    printf("Usage: %s [opts] <url>\n", basename(argv[0]));
+    printf("Example: %s http://example.com/some/filename.zsync\n", basename(argv[0]));
+    printf("Options:\n");
+    printf("-r <x>      printRedirect\n");
+    printf("-c <x>      cookie\n");
+    printf("-k <x>      zfname\n");
+    printf("-o <x>      filename\n");
+    printf("-i <x>      seedfiles\n");
+    printf("-V          print version.\n");
+    printf("-I          http_ssl_insecure\n");
+    printf("-s          silent, no_progress\n");
+    printf("-q          quiet, no_progress\n");
+    printf("-j          justCheckForUpdates\n");
+    printf("-u <x>      referer\n");
+    printf("--key <key>           Private key file name\n");
+    printf("--cert <certificate>  Client certificate\n");
+    printf("--cacert <file>       CA certificate to verify peer against\n");
+    printf("-h          print help.\n");
+}
+
 /****************************************************************************
  *
  * Main program */
@@ -645,6 +667,10 @@ int main(int argc, char **argv) {
                 break;
             case 'j':
                 justCheckForUpdates = 1;
+                break;
+            case 'h':
+                display_help(argc, argv);
+                exit(1);
                 break;
             }
         }
