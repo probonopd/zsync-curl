@@ -12,6 +12,7 @@ include(CheckSymbolExists)
 check_symbol_exists(getaddrinfo "netdb.h" HAVE_GETADDRINFO)
 
 add_executable(zsync_curl client.c http.c url.c progress.c base64.c)
+set_target_properties(zsync_curl PROPERTIES OUTPUT_NAME "zsync")
 
 
 if(HAVE_GETADDRINFO)
@@ -28,6 +29,7 @@ target_link_libraries(zsync_curl
 )
 
 add_executable(zsyncmake_curl make.c makegz.c)
+set_target_properties(zsyncmake_curl PROPERTIES OUTPUT_NAME "zsyncmake")
 target_link_libraries(zsyncmake_curl
     PRIVATE
         Zsync::zsync
