@@ -9,7 +9,12 @@ add_subdirectory(libzsync)
 #add_subdirectory(doc)
 
 include(CheckSymbolExists)
+include(CheckTypeSize)
+
 check_symbol_exists(getaddrinfo "netdb.h" HAVE_GETADDRINFO)
+CHECK_TYPE_SIZE(off_t SIZEOF_OFF_T)
+
+add_definitions(-DSIZEOF_OFF_T=${SIZEOF_OFF_T})
 
 add_executable(zsync_curl client.c http.c url.c progress.c base64.c)
 set_target_properties(zsync_curl PROPERTIES OUTPUT_NAME "zsync")
