@@ -3,6 +3,8 @@ project(mxnet6000 LANGUAGES C)
 
 add_definitions(-DPACKAGE="zsync_curl" -DVERSION="0.6.2")
 
+set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} -Os)
+
 add_subdirectory(librcksum)
 add_subdirectory(zlib)
 add_subdirectory(libzsync)
@@ -44,5 +46,11 @@ target_link_libraries(zsyncmake_curl
         m
 )
 
-#zsync_curl_LDADD = libzsync/libzsync.a librcksum/librcksum.a zlib/libinflate.a $(LIBOBJS)
+install(
+    TARGETS
+        zsync_curl
+        zsyncmake_curl
+    RUNTIME DESTINATION
+        bin
+)
 
