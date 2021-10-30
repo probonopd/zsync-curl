@@ -22,3 +22,4 @@ src/librcksum/md4test
 src/libzsync/sha1test
 stamp-h1
 zsync_curl
+src/cmake-build-*/
