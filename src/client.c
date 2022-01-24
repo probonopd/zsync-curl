@@ -575,21 +575,21 @@ void display_help(int argc, char**argv)
     printf("Usage: %s [opts] <url>\n", basename(argv[0]));
     printf("Example: %s http://example.com/some/filename.zsync\n", basename(argv[0]));
     printf("Options:\n");
-    printf("-r <x>      printRedirect\n");
-    printf("-c <x>      cookie\n");
-    printf("-k <x>      zfname\n");
-    printf("-o <x>      filename\n");
-    printf("-i <x>      seedfiles\n");
-    printf("-V          print version.\n");
-    printf("-I          http_ssl_insecure\n");
-    printf("-s          silent, no_progress\n");
-    printf("-q          quiet, no_progress\n");
-    printf("-j          justCheckForUpdates\n");
-    printf("-u <x>      referer\n");
+    printf("-r <url>              Print target URL if given URL is redirected\n");
+    printf("-c <cookiefile>       Use cookies from cookiefile\n");
+    printf("-k <file.zsync>       Save zsync file with given filename\n");
+    printf("-o <outputfile>       Override the default output file name\n");
+    printf("-i <inputfile>        Specify (extra) input files\n");
+    printf("-V                    Print version of zsync and exit\n");
+    printf("-I                    Do not verify ssl certificates\n");
+    printf("-q                    Supress the progress bar, download rate and ETA display\n");
+    printf("-s                    Deprecated synonym for -q\n");
+    printf("-j                    Only check for updates, no download\n");
+    printf("-u <url>              Set the HTTP referer\n");
     printf("--key <key>           Private key file name\n");
     printf("--cert <certificate>  Client certificate\n");
     printf("--cacert <file>       CA certificate to verify peer against\n");
-    printf("-h          print help.\n");
+    printf("-h                    Print this help.\n");
 }
 
 /****************************************************************************
