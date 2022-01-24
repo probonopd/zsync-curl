@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(mxnet6000 LANGUAGES C)
+project(zsync-curl LANGUAGES C)
 
 add_definitions(-DPACKAGE="zsync_curl" -DVERSION="0.6.2")
 set(CMAKE_C_STANDARD 99)
