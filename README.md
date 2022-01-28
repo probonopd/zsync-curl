@@ -1,4 +1,4 @@
-# zsync-curl [![Build Status](https://travis-ci.org/AppImage/zsync-curl.svg?branch=master)](https://travis-ci.org/AppImage/zsync-curl) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/7cc91ba6387242babafbe2a5be4648bf)](https://www.codacy.com/app/probonopd/zsync-curl?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=AppImage/zsync-curl&amp;utm_campaign=Badge_Grade)
+# zsync-curl
 
 Partial/differential file download client over HTTP(S).
 
