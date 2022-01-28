@@ -1,3 +1,4 @@
+AM_CPPFLAGS = "-I$(top_srcdir)"
 
 noinst_LIBRARIES = libzsync.a
 

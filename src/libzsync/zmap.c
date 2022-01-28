@@ -28,9 +28,6 @@
 #include <string.h>
 #include <sys/types.h>
 #include <arpa/inet.h>
-#ifdef HAVE_INTTYPES_H
-#include <inttypes.h>
-#endif
 
 #ifdef WITH_DMALLOC
 # include <dmalloc.h>
