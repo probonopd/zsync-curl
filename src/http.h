@@ -20,6 +20,10 @@ extern char *referer;
 extern char *redirected;
 extern int use_redirected;
 extern int http_ssl_insecure;
+extern int http_verbose;
+extern const char* http_clientauth_key;
+extern const char* http_clientauth_cert;
+extern const char* http_cacert;
 extern char *cookie;
 
 int set_proxy_from_string(const char* s);

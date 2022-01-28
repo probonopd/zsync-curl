@@ -559,6 +559,23 @@ off_t get_len(FILE * f) {
     return s.st_size;
 }
 
+void display_help(int argc, char**argv)
+{
+    printf("Usage: %s [opts] <filename>\n", basename(argv[0]));
+    printf("-b <blocksize>      set blocksize, must be a power of 2 (512, 1024, 2048, ...).\n");
+    printf("-C                  recompress output.\n");
+    printf("-e                  do_exact\n");
+    printf("-o <filename>       set output filename.\n");
+    printf("-f <filename>       set target filename.\n");
+    printf("-u <url>            set file download-url\n");
+    printf("-U <url>            also set file download-url\n");
+    printf("-v                  be verbose.\n");
+    printf("-V                  print version.\n");
+    printf("-z                  gzip compress targetfile\n");
+    printf("-Z                  do not try to detect if file is gzip compressed\n");
+    printf("-h                  print help.\n");
+}
+
 /****************************************************************************
  *
  * Main program
@@ -585,7 +602,7 @@ int main(int argc, char **argv) {
 
     {   /* Options parsing */
         int opt;
-        while ((opt = getopt(argc, argv, "b:Ceo:f:u:U:vVzZ")) != -1) {
+        while ((opt = getopt(argc, argv, "b:Ceo:f:u:U:vVzZh")) != -1) {
             switch (opt) {
             case 'e':
                 do_exact = 1;
@@ -637,6 +654,9 @@ int main(int argc, char **argv) {
             case 'Z':
                 no_look_inside = 1;
                 break;
+            case 'h':
+                display_help(argc, argv);
+                return 1;
             }
         }
 

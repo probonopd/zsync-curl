@@ -30,6 +30,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <utime.h>
+#include <libgen.h>
+#include <getopt.h>
 
 #include <curl/curl.h>
 
@@ -59,6 +61,18 @@ char* get_redirected_url(const char *url)
 
     curl = curl_easy_init();
     if(curl) {
+      if (http_verbose) {
+          curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+      }
+      if(http_clientauth_key){
+          curl_easy_setopt(curl, CURLOPT_SSLKEY, http_clientauth_key);
+      }
+      if(http_clientauth_cert){
+          curl_easy_setopt(curl, CURLOPT_SSLCERT, http_clientauth_cert);
+      }
+      if(http_cacert){
+          curl_easy_setopt(curl, CURLOPT_CAINFO, http_cacert);
+      }
       curl_easy_setopt(curl, CURLOPT_URL, url);
       // FIXME: The two next lines are to prevent from "curl_easy_perform() failed: Problem with the SSL CA cert (path? access rights?)"
       curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
@@ -353,11 +367,23 @@ int fetch_remaining_blocks_http(struct zsync_state *z, const char *url,
         CURLcode res;
         char *redirected_payload_url;
         curl = curl_easy_init();
+        if (http_verbose) {
+            curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+        }
         curl_easy_setopt(curl, CURLOPT_URL, u);
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1u);
         if(http_ssl_insecure){
             curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
             curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);
+        }
+        if(http_clientauth_key){
+            curl_easy_setopt(curl, CURLOPT_SSLKEY, http_clientauth_key);
+        }
+        if(http_clientauth_cert){
+            curl_easy_setopt(curl, CURLOPT_SSLCERT, http_clientauth_cert);
+        }
+        if(http_cacert){
+            curl_easy_setopt(curl, CURLOPT_SSLKEY, http_cacert);
         }
         // CURLOPT_NOBODY would result in a HEAD rather than GET request
         // to which some servers respond differently; hence we cannot use it
@@ -544,6 +570,28 @@ static int set_mtime(char* filename, time_t mtime) {
     return 0;
 }
 
+void display_help(int argc, char**argv)
+{
+    printf("Usage: %s [opts] <url>\n", basename(argv[0]));
+    printf("Example: %s http://example.com/some/filename.zsync\n", basename(argv[0]));
+    printf("Options:\n");
+    printf("-r <url>              Print target URL if given URL is redirected\n");
+    printf("-c <cookiefile>       Use cookies from cookiefile\n");
+    printf("-k <file.zsync>       Save zsync file with given filename\n");
+    printf("-o <outputfile>       Override the default output file name\n");
+    printf("-i <inputfile>        Specify (extra) input files\n");
+    printf("-V                    Print version of zsync and exit\n");
+    printf("-I                    Do not verify ssl certificates\n");
+    printf("-q                    Supress the progress bar, download rate and ETA display\n");
+    printf("-s                    Deprecated synonym for -q\n");
+    printf("-j                    Only check for updates, no download\n");
+    printf("-u <url>              Set the HTTP referer\n");
+    printf("--key <key>           Private key file name\n");
+    printf("--cert <certificate>  Client certificate\n");
+    printf("--cacert <file>       CA certificate to verify peer against\n");
+    printf("-h                    Print this help.\n");
+}
+
 /****************************************************************************
  *
  * Main program */
@@ -557,6 +605,13 @@ int main(int argc, char **argv) {
     char *zfname = NULL;
     time_t mtime;
 
+    static struct option long_options[] = {
+        {"cacert", required_argument, 0,  1 },
+        {"key",    required_argument, 0,  2 },
+        {"cert",   required_argument, 0,  3 },
+        {0,        0,                 0,  0 }
+    };
+
     int printRedirect = 0;
     int justCheckForUpdates = 0;
 
@@ -564,8 +619,17 @@ int main(int argc, char **argv) {
     {   /* Option parsing */
         int opt;
 
-        while ((opt = getopt(argc, argv, "r:c:k:o:i:VIsqju:")) != -1) {
+        while ((opt = getopt_long(argc, argv, "r:c:k:o:i:vVIsqju:h", long_options, NULL)) != -1) {
             switch (opt) {
+            case 1:
+                http_cacert = optarg;
+                break;
+            case 2:
+                http_clientauth_key = optarg;
+                break;
+            case 3:
+                http_clientauth_cert = optarg;
+                break;
             case 'k':
                 free(zfname);
                 zfname = strdup(optarg);
@@ -576,6 +640,9 @@ int main(int argc, char **argv) {
                 break;
             case 'i':
                 seedfiles = append_ptrlist(&nseedfiles, seedfiles, optarg);
+                break;
+            case 'v':
+                http_verbose = 1;
                 break;
             case 'V':
                 printf(PACKAGE " v" VERSION " (compiled " __DATE__ " " __TIME__
@@ -601,6 +668,10 @@ int main(int argc, char **argv) {
             case 'j':
                 justCheckForUpdates = 1;
                 break;
+            case 'h':
+                display_help(argc, argv);
+                exit(1);
+                break;
             }
         }
     }
@@ -616,12 +687,13 @@ int main(int argc, char **argv) {
     /* Last and only non-option parameter must be the path/URL of the .zsync */
     if (optind == argc) {
         fprintf(stderr,
-                "No .zsync file specified.\nUsage: zsync http://example.com/some/filename.zsync\n");
+                "No .zsync file specified.\n");
+        fflush(stderr);
+        display_help(argc, argv);
         exit(3);
     }
     else if (optind < argc - 1) {
-        fprintf(stderr,
-                "Usage: zsync http://example.com/some/filename.zsync\n");
+        display_help(argc, argv);
         exit(3);
     }
 
