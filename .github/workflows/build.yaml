@@ -1,0 +1,22 @@
+name: Build
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-20.04
+    container: ubuntu:trusty
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TRAVIS_BUILD_NUMBER: ${{ github.run_number }}
+      VERSION: continuous
+    steps:
+      - name: Configure build machine
+        run: |
+          apt update
+          apt install -y -q apt-transport-https curl git software-properties-common sudo wget
+          # The keyboard-configuration package is needed later and requires the user to input a number via dpkg-reconfigure, so preinstall it without front-end to avoid blocking the later installations
+          DEBIAN_FRONTEND=noninteractive apt install -y -q keyboard-configuration
+      - name: Checkout sources
+        run: |
+          bash -ex semistaticbuild.sh
