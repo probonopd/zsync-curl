@@ -65,4 +65,3 @@ AC_SUBST(ac_aux_dir)
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile librcksum/Makefile zlib/Makefile libzsync/Makefile doc/Makefile])
 AC_OUTPUT
-
