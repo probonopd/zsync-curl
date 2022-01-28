@@ -19,4 +19,11 @@ jobs:
           DEBIAN_FRONTEND=noninteractive apt install -y -q keyboard-configuration
       - name: Checkout sources
         run: |
+          # Can't use actions/checkout@v2 action here because it needs a newer Ubuntu version, so the action downloads an archive instead of a git repository, and this prevents linuxdeployqt from finding the commit it is built from
+          # Retrieve the correct repository and branch names according to the build event (push or pull_request)
+          if [ -z "${{ github.head_ref }}" ]; then BRANCH=${{ github.ref_name }}; REPOSITORY=${{ github.repository }}; else BRANCH=${{ github.head_ref }}; REPOSITORY=${{ github.event.pull_request.head.repo.full_name }}; fi
+          echo "Cloning branch $BRANCH from repository $REPOSITORY..."
+          git clone --depth=1 https://github.com/$REPOSITORY --branch=$BRANCH .
+      - name: Build
+        run: |
           bash -ex semistaticbuild.sh
