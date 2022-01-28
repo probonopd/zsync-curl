@@ -56,5 +56,5 @@ In this example, 94% of the data can be taken from the existing local file, and 
 
 ## Projects using zsync-curl
 
-* https://github.com/AppImage/AppImageUpdate
+* https://github.com/AppImage/AppImageUpdate before it was switched to https://github.com/AppImage/zsync2
 * https://github.com/apachelogger/kde-os-autoinst
