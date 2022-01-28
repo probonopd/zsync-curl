@@ -10,6 +10,17 @@ This fork uses [libcurl](http://curl.haxx.se/libcurl/) in order to support __HTT
 
 ## Building
 
+### Building with cmake
+
+To build and install locally:
+```
+cmake -B build
+cmake --build build
+cmake --install build
+```
+
+### Building the 'classic' way
+
 To build and install locally:
 ```
 sudo apt-get -y install git devscripts autotools-dev libcurl4-openssl-dev

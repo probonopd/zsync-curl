@@ -74,6 +74,10 @@ typedef struct http_file HTTP_FILE;
 CURLM *multi_handle;
 
 int http_ssl_insecure = 0;
+int http_verbose = 0;
+const char* http_clientauth_key = NULL;
+const char* http_clientauth_cert = NULL;
+const char* http_cacert = NULL;
 
 char *cookie;
 
@@ -113,9 +117,25 @@ struct range_fetch {
         curl_easy_setopt(handle, CURLOPT_PROXY, pr);
     }
 
+    if (http_verbose) {
+        curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
+    }
+
     if(http_ssl_insecure){
-        curl_easy_setopt( handle, CURLOPT_SSL_VERIFYPEER, 0 );
-        curl_easy_setopt( handle, CURLOPT_SSL_VERIFYHOST, 0 );
+        curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 0 );
+        curl_easy_setopt(handle, CURLOPT_SSL_VERIFYHOST, 0 );
+    }
+
+    if(http_clientauth_key){
+        curl_easy_setopt(handle, CURLOPT_SSLKEY, http_clientauth_key);
+    }
+
+    if(http_clientauth_cert){
+        curl_easy_setopt(handle, CURLOPT_SSLCERT, http_clientauth_cert);
+    }
+
+    if(http_cacert){
+        curl_easy_setopt(handle, CURLOPT_CAINFO, http_cacert);
     }
 
     if(cookie != NULL){
