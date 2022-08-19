@@ -640,7 +640,6 @@ int main(int argc, char **argv) {
                 break;
             case 4:
                 http_unix_socket_path = optarg;
-                printf("set http_unix_socket_path:%s\n", http_unix_socket_path);
                 break;
             case 'k':
                 free(zfname);
