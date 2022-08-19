@@ -24,6 +24,7 @@ extern int http_verbose;
 extern const char* http_clientauth_key;
 extern const char* http_clientauth_cert;
 extern const char* http_cacert;
+extern const char* http_unix_socket_path;
 extern char *cookie;
 
 int set_proxy_from_string(const char* s);

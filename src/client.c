@@ -73,6 +73,9 @@ char* get_redirected_url(const char *url)
       if(http_cacert){
           curl_easy_setopt(curl, CURLOPT_CAINFO, http_cacert);
       }
+      if(http_unix_socket_path){
+          curl_easy_setopt(curl, CURLOPT_UNIX_SOCKET_PATH, http_unix_socket_path);
+      }
       curl_easy_setopt(curl, CURLOPT_URL, url);
       // FIXME: The two next lines are to prevent from "curl_easy_perform() failed: Problem with the SSL CA cert (path? access rights?)"
       curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
@@ -385,6 +388,9 @@ int fetch_remaining_blocks_http(struct zsync_state *z, const char *url,
         if(http_cacert){
             curl_easy_setopt(curl, CURLOPT_SSLKEY, http_cacert);
         }
+        if(http_unix_socket_path){
+            curl_easy_setopt(curl, CURLOPT_UNIX_SOCKET_PATH, http_unix_socket_path);
+        }
         // CURLOPT_NOBODY would result in a HEAD rather than GET request
         // to which some servers respond differently; hence we cannot use it
         curl_easy_setopt(curl, CURLOPT_RANGE, "0-0"); // Replacement for CURLOPT_NOBODY 
@@ -589,6 +595,7 @@ void display_help(int argc, char**argv)
     printf("--key <key>           Private key file name\n");
     printf("--cert <certificate>  Client certificate\n");
     printf("--cacert <file>       CA certificate to verify peer against\n");
+    printf("--unix-socket <path>  Connect through this Unix domain socket\n");
     printf("-h                    Print this help.\n");
 }
 
@@ -609,6 +616,7 @@ int main(int argc, char **argv) {
         {"cacert", required_argument, 0,  1 },
         {"key",    required_argument, 0,  2 },
         {"cert",   required_argument, 0,  3 },
+        {"unix-socket",   required_argument, 0,  4 },
         {0,        0,                 0,  0 }
     };
 
@@ -629,6 +637,10 @@ int main(int argc, char **argv) {
                 break;
             case 3:
                 http_clientauth_cert = optarg;
+                break;
+            case 4:
+                http_unix_socket_path = optarg;
+                printf("set http_unix_socket_path:%s\n", http_unix_socket_path);
                 break;
             case 'k':
                 free(zfname);
