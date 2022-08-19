@@ -1,4 +1,4 @@
-
+AM_CPPFLAGS = "-I$(top_srcdir)"
 
 noinst_LIBRARIES = librcksum.a
 
