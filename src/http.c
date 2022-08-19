@@ -78,6 +78,7 @@ int http_verbose = 0;
 const char* http_clientauth_key = NULL;
 const char* http_clientauth_cert = NULL;
 const char* http_cacert = NULL;
+const char* http_unix_socket_path = NULL;
 
 char *cookie;
 
@@ -136,6 +137,10 @@ struct range_fetch {
 
     if(http_cacert){
         curl_easy_setopt(handle, CURLOPT_CAINFO, http_cacert);
+    }
+    
+    if(http_unix_socket_path){
+        curl_easy_setopt(handle, CURLOPT_UNIX_SOCKET_PATH, http_unix_socket_path);
     }
 
     if(cookie != NULL){
